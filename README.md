@@ -15,7 +15,10 @@ these for 'informal' and one for 'formal'.
 - [Fancy Tokens](https://civicrm.org/extensions/fancy-tokens)
 
 - Use Smarty Conditionals in your Greeting Settings, e.g.:
-       {capture assign=first_name}{contact.first_name}{/capture}Dear {$first_name|default:Supporter},
+
+   ```
+   {capture assign=first_name}{contact.first_name}{/capture}Dear {$first_name|default:Supporter},
+   ```
 
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
