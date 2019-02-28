@@ -145,16 +145,25 @@ function dearyou_civicrm_entityTypes(&$entityTypes) {
  */
 function dearyou_civicrm_tokens( &$tokens ) {
   $tokens['dearyou'] = [
-    'informal' => ts('Informal greeting :: Dear You'),
+    'dearyou.informal' => ts('Informal greeting :: Dear You'),
+    'dearyou.formal'   => ts('Formal greeting :: Dear You'),
   ];
 }
 /**
  * Creates the dearyou token.
  */
 function dearyou_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
-  if (empty($tokens['contact']['dearyou'])) {
-    // Nothing fo us to do.
+  if (empty($tokens['dearyou'])) {
     return;
+  }
+
+  $dearyou_settings = json_decode(Civi::settings()->get('dearyou'));
+
+  $versions = [];
+  foreach ($tokens['dearyou'] as $_) {
+    if (isset($dearyou_settings->tokens->$_)) {
+      $versions[$_] = $dearyou_settings->tokens->$_;
+    }
   }
 
   $contact_ids = [];
@@ -167,21 +176,33 @@ function dearyou_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = arr
   }
   $dao = CRM_Core_DAO::executeQuery("
       SELECT first_name, nick_name, last_name,
-             legal_name, organization_name,
+             legal_name, organization_name, display_name,
              contact_type, id
       FROM civicrm_contact
       WHERE id IN ($contact_ids)"
     );
 
   while ($dao->fetch()) {
-    $_ = trim($dao->first_name);
-    if (!$_) {
-      $_ = 'Supporter';
-    }
-    $_ = "Oi, $_";
-    $values[$dao->id]['x.dearyou'] = $_;
-  }
 
+    foreach ($versions as $key=>$config) {
+      $val = '';
+      $contact_type = strtolower($dao->contact_type);
+      $prefs = explode(',', $config->$contact_type->ifData->prefs);
+      foreach ($prefs as $prefferred_field) {
+        if (!empty($dao->$prefferred_field)) {
+          $val = $config->$contact_type->ifData->pre
+                 . $dao->$prefferred_field
+                 . $config->$contact_type->ifData->post;
+          break;
+        }
+      }
+      if (!$val) {
+        $val = $config->$contact_type->ifNoData->text;
+      }
+      $values[$dao->id]["dearyou.$key"] = $val;
+    }
+
+  }
 }
 
 function dearyou_civicrm_navigationMenu(&$menu) {
