@@ -9,7 +9,7 @@
 
         <div ng-repeat="contactType in ['individual', 'household', 'organization']" >
           <h3>Settings for {{ contactType }}s</h3>
-          <input ng-model="preset[contactType].ifData.pre" />
+          <input ng-trim="false" ng-model="preset[contactType].ifData.pre" />
           <select ng-model="preset[contactType].ifData.prefs" >
             <option ng-if="contactType === 'individual'" value="nickname,first_name" >Nickname, or failing that, First Name</option>
             <option ng-if="contactType === 'individual'" value="first_name" >First Name</option>
@@ -17,11 +17,11 @@
             <option ng-if="contactType === 'organization'" value="organization_name" >Organisation Name</option>
             <option ng-if="contactType === 'organization'" value="legal_name" >Legal Name</option>
           </select>
-          <input ng-model="preset[contactType].ifData.post" />
+          <input ng-trim="false" ng-model="preset[contactType].ifData.post" />
           e.g. <samp>{{preset[contactType].ifData.pre}}{{ exampleNames[contactType] }}{{preset[contactType].ifData.post}}</samp>
 
           <p>...but if that's not available, use:</p>
-          <input ng-model="preset[contactType].ifNoData.text" />
+          <input ng-trim="false" ng-model="preset[contactType].ifNoData.text" />
         </div>
     </div>
 
