@@ -163,7 +163,7 @@ function dearyou_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = arr
   // The array keys of tokens[dearyou] may include 'informal' or 'formal'
   // and if these exist in the config, use them.
   $versions = [];
-  foreach (array_keys($tokens['dearyou']) as $_) {
+  foreach ($tokens['dearyou'] as $_) {
     if (isset($dearyou_settings->tokens->$_)) {
       $versions[$_] = $dearyou_settings->tokens->$_;
     }
