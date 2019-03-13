@@ -159,11 +159,21 @@ function dearyou_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = arr
 
   $dearyou_settings = json_decode(Civi::settings()->get('dearyou'));
 
+  // $tokens is sometimes like: { 'contact': { 'foo': 1 } } and sometimes like { 'contact': ['foo'] }
+  if (is_numeric(key($tokens['dearyou']))) {
+    // We have the 2nd form.
+    $dearyou_tokens_in_use = array_values($tokens['dearyou']);
+  }
+  else {
+    // tokens are keys.
+    $dearyou_tokens_in_use = array_keys($tokens['dearyou']);
+  }
+
   // Create an array including only the settings we need to process.
   // The array keys of tokens[dearyou] may include 'informal' or 'formal'
   // and if these exist in the config, use them.
   $versions = [];
-  foreach ($tokens['dearyou'] as $_) {
+  foreach ($dearyou_tokens_in_use as $_) {
     if (isset($dearyou_settings->tokens->$_)) {
       $versions[$_] = $dearyou_settings->tokens->$_;
     }
